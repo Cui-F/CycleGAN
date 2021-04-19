@@ -1,7 +1,7 @@
 import time
 
 from models import CycleGANModel
-from utils import UnalignedDataset, TrainOptions
+from utils import UnalignedDataset, TrainOptions, print_current_losses
 
 if __name__ == '__main__':
 
@@ -29,6 +29,11 @@ if __name__ == '__main__':
             epoch_iter += opt.batch_size
             model.set_input(data)         # unpack data from dataset and apply preprocessing
             model.optimize_parameters()
+
+            if epoch % opt.print_freq ==0:
+                losses = model.get_current_losses()
+                t_comp = (time.time() - iter_start_time) / opt.batch_size
+                print_current_losses(epoch, epoch_iter, losses, t_comp, t_data)
 
             if epoch % opt.save_epoch_freq == 0:  # cache our model every <save_epoch_freq> epochs
                 print('saving the model at the end of epoch %d, iters %d' % (epoch, total_iters))
